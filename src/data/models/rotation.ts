@@ -1,4 +1,4 @@
-import { Acquisition, Annotations, Distance, Landmark, type ProjectImage } from "@optica/core"
+import { Acquisition, Annotations, Distance, Landmark, type ProjectImage } from "optica-core"
 
 // Image taken with the polarizer at `angle` degrees
 export type RotationImage = ProjectImage & {

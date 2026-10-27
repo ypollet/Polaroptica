@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, type HTMLAttributes } from 'vue';
 import type { CircularSliderProps, CircularSliderEmits } from '.';
-import { cn } from '@optica/core'
+import { cn } from 'optica-core'
 
 const props = defineProps<CircularSliderProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<CircularSliderEmits>()

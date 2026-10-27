@@ -1,6 +1,6 @@
 # Polaroptica (core)
 
-Polaroptica rebuilt on [`core/`](../core): the viewers, landmark and distance lists, menu, models and data layer come from `@optica/core` and `optica_core`; this folder only keeps what is specific to rotated polarized light.
+Polaroptica rebuilt on [`core/`](../core): the viewers, landmark and distance lists, menu, models and data layer come from `optica-core` and `optica_core`; this folder only keeps what is specific to rotated polarized light.
 
 - `src/data/models/rotation.ts`: `RotationImage` (an image with its angle), `RotationAcquisition` (wraps around 360°, angle → image), `PolarDistance` (all its landmarks on the same angle).
 - `src/lib/stores.ts`: the project, the annotations and the settings.

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Project } from '@optica/core'
+import type { Project } from 'optica-core'
 import type { RotationAcquisition, RotationImage } from '@/data/models/rotation'
 
 export const useSettingsStore = defineStore('settings', {

@@ -1,4 +1,4 @@
-import { parseAcquisitions, ProjectRepository, type AcquisitionObject, type DataProvider } from "@optica/core"
+import { parseAcquisitions, ProjectRepository, type AcquisitionObject, type DataProvider } from "optica-core"
 import { RotationAcquisition, type RotationImage } from "../models/rotation"
 
 // Reads the standard payload, or the one of the polaroptica backends not migrated yet (Orthanc plugin)
