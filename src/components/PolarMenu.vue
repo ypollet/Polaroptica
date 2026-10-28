@@ -1,12 +1,7 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 import { downloadCSV, downloadJSON, exportFilename } from 'optica-core'
 import { AppMenu } from 'optica-core/ui/app-menu'
 import { credits } from '@/config/credits'
-=======
-import { downloadCSV, downloadJSON, exportFilename } from '@optica/core'
-import { AppMenu } from '@optica/core/ui/app-menu'
->>>>>>> ba35e77 (Fix : added credits + image info)
 import { useImagesStore, useSettingsStore } from '@/lib/stores'
 import { Credits } from '@/components/credits'
 
