@@ -7,6 +7,7 @@ import { LandmarkList } from 'optica-core/ui/landmark'
 import { CircularSlider } from '@/components/circular-slider'
 import { angleOf } from '@/data/models/rotation'
 import { useImagesStore } from '@/lib/stores'
+import { ImageOverview } from 'optica-core/ui/image-overview'
 
 const imagesStore = useImagesStore()
 const { acquisition, annotations, selectedImage } = storeToRefs(imagesStore)
