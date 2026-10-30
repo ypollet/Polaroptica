@@ -10,17 +10,21 @@ class RotationDataset(Dataset):
 
     def images(self, id):
         rotation_file = self.load(id)
+        folder = self.thumbnails_folder(id, rotation_file)
         images = []
         for name, data in rotation_file["rotation"].items():
             if "angle" not in data:
                 print(f"{name} has no angle, skipped")
                 continue
-            images.append(image(name, angle=round(data["angle"], 1)))
+            images.append(image(
+                name,
+                angle=round(data["angle"], 1),
+                hasThumbnail=self.has_thumbnail(folder, name),
+            ))
         return project(acquisition(
             "rotation",
             size={"height": rotation_file["height"], "width": rotation_file["width"]},
             images=images,
-            thumbnails=len(rotation_file["thumbnails"]) != 0,
         ))
 
     # all the images share the pixel ratio of the object

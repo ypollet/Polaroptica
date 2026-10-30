@@ -46,12 +46,12 @@ async function move(landmark: Landmark, pos: Coordinates) {
     return
   }
   landmark.setPose(selectedImage.value, pos)
-  landmark.setPosition(await repository.computeLandmarkPosition(imagesStore.objectPath, landmark.pose))
+  landmark.position = await repository.computeLandmarkPosition(imagesStore.objectPath, landmark.pose)
 }
 </script>
 
 <template>
-  <ProjectLoader :load="loadProject" :query-key="['project', imagesStore.objectPath]">
+  <ProjectLoader :load="loadProject">
     <ImageViewer v-if="acquisition && annotations && selectedImage" class="object-fit" :image="selectedImage"
       :size="acquisition.sizeOf()" :camera="acquisition.camera" :landmarks="annotations.landmarks"
       :distances="annotations.distances" :can-drag="(landmark) => annotations!.canMoveTo(landmark, imagesStore.angle)"

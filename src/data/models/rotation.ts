@@ -1,4 +1,7 @@
-import { Acquisition, Annotations, Distance, Landmark, type ProjectImage } from "optica-core"
+import {
+    Acquisition, Annotations, Distance, is3D, Landmark, type ProjectImage,
+    LANDMARK_CSV_HEADER, POSE_CSV_HEADER, POSITION_CSV_HEADER,
+} from "optica-core"
 
 // Image taken with the polarizer at `angle` degrees
 export type RotationImage = ProjectImage & {
@@ -8,6 +11,18 @@ export type RotationImage = ProjectImage & {
 // angle of the image the landmark is placed on, kept in the details of its reference
 export function angleOf(landmark: Landmark): number {
     return Number(landmark.pose.image.details?.angle)
+}
+
+export const IMAGE_DETAILS_CSV_HEADER = ["Angle"]
+
+export const POLAR_CSV_HEADER = [...LANDMARK_CSV_HEADER, ...POSE_CSV_HEADER, ...IMAGE_DETAILS_CSV_HEADER, ...POSITION_CSV_HEADER]
+
+// one CSV row (POLAR_CSV_HEADER), `group`: label of the distance of the landmark
+export function polarCSVRow(type: string, group: string, landmark: Landmark): string[] {
+    const { marker, image } = landmark.pose
+    const position = landmark.position
+    return [type, group, landmark.label, landmark.getColorHEX(), marker.x.toFixed(5).toString(), marker.y.toFixed(5).toString(),
+        image.name, image.label, image.details?.angle?.toString() ?? "", position.x.toFixed(5).toString(), position.y.toFixed(5).toString(), is3D(position) ? position.z.toFixed(5).toString() : ""]
 }
 
 // The rotation: browsing wraps around 360°
@@ -68,5 +83,17 @@ export class PolarAnnotations extends Annotations {
     canMoveTo(landmark: Landmark, angle: number): boolean {
         const distance = this.distanceOf(landmark)
         return distance ? this.acceptsAngle(distance, angle) : true 
+    }
+
+    // Adding RotationAngle
+    csvHeader(): string[] {
+        return POLAR_CSV_HEADER
+    }
+
+    toCSVRows(): string[][] {
+        return [
+            ...this.landmarks.map((landmark) => polarCSVRow("Landmark", "", landmark)),
+            ...this.distances.flatMap((distance) => distance.landmarks.map((landmark) => polarCSVRow("Distance", distance.label, landmark))),
+        ]
     }
 }

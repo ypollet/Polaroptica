@@ -37,7 +37,7 @@ const { acquisition, annotations, selectedImage } = storeToRefs(imagesStore)
         </template>
         <template #distances>
           <DistanceList v-model="annotations.distances" v-model:selected="annotations.selectedDistanceIndex"
-            v-model:scale="annotations.scale" :adjust-factor="annotations.adjustFactor">
+            :annotations="annotations">
             <template #info="{ distance }">
               <Label v-if="annotations.angleOf(distance) != null" class="inline-block w-10 text-right tabular-nums whitespace-nowrap"
                 title="Image on which all the landmarks are placed" @dblclick.stop="imagesStore.goToAngle(annotations.angleOf(distance)!)">

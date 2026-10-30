@@ -6,7 +6,7 @@ export function parseRotation(data: any): AcquisitionObject<RotationImage>[] {
     if (data.acquisitions) {
         return parseAcquisitions<RotationImage>(data)
     }
-    return [{ id: "rotation", images: data.rotationImages, size: data.size, thumbnails: data.thumbnails }]
+    return [{ id: "rotation", images: data.rotationImages, size: data.size }]
 }
 
 export class RotationRepository extends ProjectRepository<RotationImage, RotationAcquisition> {
