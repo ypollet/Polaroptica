@@ -1,5 +1,5 @@
 import {
-    Acquisition, Annotations, BoundingBox, Distance, imageRef, is3D, Landmark, Polygon, type ImageRef, type ProjectImage,
+    Acquisition, Annotations, BoundingBox, Distance, imageRef, Landmark, Polygon, positionCSV, type ImageRef, type ProjectImage,
     LANDMARK_CSV_HEADER, POSE_CSV_HEADER, POSITION_CSV_HEADER, SCALED_POSITION_CSV_HEADER,
 } from "optica-core"
 
@@ -20,9 +20,8 @@ export const POLAR_CSV_HEADER = [...LANDMARK_CSV_HEADER, ...POSE_CSV_HEADER, ...
 // one CSV row (POLAR_CSV_HEADER), `group`: label of the distance of the landmark
 export function polarCSVRow(type: string, group: string, landmark: Landmark): string[] {
     const { marker, image } = landmark.pose
-    const position = landmark.position
     return [type, group, landmark.label, landmark.getColorHEX(), marker.x.toFixed(5).toString(), marker.y.toFixed(5).toString(),
-        image.name, image.label, image.details?.angle?.toString() ?? "", position.x.toFixed(5).toString(), position.y.toFixed(5).toString(), is3D(position) ? position.z.toFixed(5).toString() : ""]
+        image.name, image.label, image.details?.angle?.toString() ?? "", ...positionCSV(landmark.position)]
 }
 
 // The rotation: browsing wraps around 360°
