@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { AnnotationTabs } from 'optica-core/ui/annotation-tabs'
-import { DistanceList } from 'optica-core/ui/distance'
+import { AnnotationsPanel } from 'optica-core/ui/annotations-panel'
 import { Label } from 'optica-core/ui/label'
-import { LandmarkList } from 'optica-core/ui/landmark'
 import { CircularSlider } from '@/components/circular-slider'
 import { angleOf } from '@/data/models/rotation'
 import { useImagesStore } from '@/lib/stores'
@@ -24,29 +22,20 @@ const { acquisition, annotations, selectedImage } = storeToRefs(imagesStore)
         </template>
       </ImageOverview>
       <!-- the annotations of the shown acquisition -->
-      <AnnotationTabs v-if="annotations" v-model="annotations.tab">
-        <template #landmarks>
-          <LandmarkList v-model="annotations.landmarks">
-            <template #info="{ landmark }">
-              <Label class="inline-block w-8 text-right tabular-nums whitespace-nowrap"
-                @dblclick="imagesStore.goToAngle(angleOf(landmark))">
-                {{ angleOf(landmark) }}°
-              </Label>
-            </template>
-          </LandmarkList>
+      <AnnotationsPanel v-if="annotations" :annotations="annotations">
+        <template #landmark-info="{ landmark }">
+          <Label class="inline-block w-8 text-right tabular-nums whitespace-nowrap"
+            @dblclick="imagesStore.goToAngle(angleOf(landmark))">
+            {{ angleOf(landmark) }}°
+          </Label>
         </template>
-        <template #distances>
-          <DistanceList v-model="annotations.distances" v-model:selected="annotations.selectedDistanceIndex"
-            :annotations="annotations">
-            <template #info="{ distance }">
-              <Label v-if="annotations.angleOf(distance) != null" class="inline-block w-10 text-right tabular-nums whitespace-nowrap"
-                title="Image on which all the landmarks are placed" @dblclick.stop="imagesStore.goToAngle(annotations.angleOf(distance)!)">
-                {{ annotations.angleOf(distance) }}°
-              </Label>
-            </template>
-          </DistanceList>
+        <template #measure-info="{ annotation }">
+          <Label v-if="annotations.angleOf(annotation) != null" class="inline-block w-10 text-right tabular-nums whitespace-nowrap"
+            title="Image on which all the landmarks are placed" @dblclick.stop="imagesStore.goToAngle(annotations.angleOf(annotation)!)">
+            {{ annotations.angleOf(annotation) }}°
+          </Label>
         </template>
-      </AnnotationTabs>
+      </AnnotationsPanel>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePersistedAnnotations } from 'optica-core'
+import { usePersistedAnnotations, usePersistedView } from 'optica-core'
 import { Separator } from 'optica-core/ui/separator'
 import MainLogo from '@/components/logo/MainLogo.vue'
 import PolarMenu from '@/components/PolarMenu.vue'
@@ -15,6 +15,8 @@ imageStore.setPath(urlParams.get('series') as string)
 
 // the annotations survive a reload (sessionStorage, by series)
 usePersistedAnnotations(() => imageStore.project)
+// and the image the viewer is on
+usePersistedView(() => imageStore.project)
 </script>
 
 <template>

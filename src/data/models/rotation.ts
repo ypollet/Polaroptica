@@ -1,6 +1,6 @@
 import {
-    Acquisition, Annotations, Distance, is3D, Landmark, type ProjectImage,
-    LANDMARK_CSV_HEADER, POSE_CSV_HEADER, POSITION_CSV_HEADER,
+    Acquisition, Annotations, BoundingBox, Distance, imageRef, is3D, Landmark, Polygon, type ImageRef, type ProjectImage,
+    LANDMARK_CSV_HEADER, POSE_CSV_HEADER, POSITION_CSV_HEADER, SCALED_POSITION_CSV_HEADER,
 } from "optica-core"
 
 // Image taken with the polarizer at `angle` degrees
@@ -15,7 +15,7 @@ export function angleOf(landmark: Landmark): number {
 
 export const IMAGE_DETAILS_CSV_HEADER = ["Angle"]
 
-export const POLAR_CSV_HEADER = [...LANDMARK_CSV_HEADER, ...POSE_CSV_HEADER, ...IMAGE_DETAILS_CSV_HEADER, ...POSITION_CSV_HEADER]
+export const POLAR_CSV_HEADER = [...LANDMARK_CSV_HEADER, ...POSE_CSV_HEADER, ...IMAGE_DETAILS_CSV_HEADER, ...POSITION_CSV_HEADER, ...SCALED_POSITION_CSV_HEADER]
 
 // one CSV row (POLAR_CSV_HEADER), `group`: label of the distance of the landmark
 export function polarCSVRow(type: string, group: string, landmark: Landmark): string[] {
@@ -64,25 +64,20 @@ export class RotationAcquisition extends Acquisition<RotationImage> {
     }
 }
 
-// Annotations of the rotation: a distance is measured on one image, all its landmarks
+// Annotations of the rotation: a distance, polygon or box is measured on one image, all its landmarks
 // share the angle of the first one
 export class PolarAnnotations extends Annotations {
-    // angle of the distance, null while it has no landmark
-    angleOf(distance: Distance): number | null {
-        const first = distance.landmarks[0]
+    // a distance, polygon or box is measured on the images of one angle
+    singleImageMeasures = true
+
+    imageKey(image: ImageRef): number {
+        return Math.round(Number(imageRef(image).details?.angle))
+    }
+
+    // angle of the distance, polygon or box, null while it has no landmark
+    angleOf(measure: Distance | Polygon | BoundingBox): number | null {
+        const first = measure.landmarks[0]
         return first ? angleOf(first) : null
-    }
-
-    // true if a landmark of the distance can be placed on an image with this angle
-    acceptsAngle(distance: Distance, angle: number): boolean {
-        const own = this.angleOf(distance)
-        return own == null || Math.round(own) == Math.round(angle)
-    }
-
-    // a landmark of a distance fixed on another angle can't be moved there
-    canMoveTo(landmark: Landmark, angle: number): boolean {
-        const distance = this.distanceOf(landmark)
-        return distance ? this.acceptsAngle(distance, angle) : true 
     }
 
     // Adding RotationAngle
@@ -91,9 +86,12 @@ export class PolarAnnotations extends Annotations {
     }
 
     toCSVRows(): string[][] {
+        const row = (type: string, group: string, landmark: Landmark) => [...polarCSVRow(type, group, landmark), ...this.scaledPositionCSV(landmark)]
         return [
-            ...this.landmarks.map((landmark) => polarCSVRow("Landmark", "", landmark)),
-            ...this.distances.flatMap((distance) => distance.landmarks.map((landmark) => polarCSVRow("Distance", distance.label, landmark))),
+            ...this.landmarks.map((landmark) => row("Landmark", "", landmark)),
+            ...this.distances.flatMap((distance) => distance.landmarks.map((landmark) => row("Distance", distance.label, landmark))),
+            ...this.polygons.flatMap((polygon) => polygon.landmarks.map((landmark) => row("Polygon", polygon.label, landmark))),
+            ...this.boxes.flatMap((box) => box.landmarks.map((landmark) => row("Box", box.label, landmark))),
         ]
     }
 }
