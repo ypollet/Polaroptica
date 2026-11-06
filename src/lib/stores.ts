@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { Project } from 'optica-core'
 import type { RotationAcquisition, RotationImage } from '@/data/models/rotation'
+import { getRepository } from '@/data/setup'
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({ isLeft: false }),
@@ -37,6 +38,13 @@ export const useImagesStore = defineStore('images', {
     setPath(path: string) {
       this.$reset()
       this.objectPath = path
+    },
+    // computes the positions that aren't known: old exports have none, a reload during a computation loses one
+    recomputePositions() {
+      const repository = getRepository()
+      this.project?.acquisitions.forEach((acquisition) => {
+        acquisition.annotations.recomputePositions((pose) => repository.computeLandmarkPosition(this.objectPath, pose))
+      })
     },
     setIndex(index: number) {
       this.acquisition?.setIndex(index)
