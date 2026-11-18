@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { downloadCSV, downloadJSON, exportFilename } from 'optica-core'
 import { AppMenu } from 'optica-core/ui/app-menu'
-import { credits } from '@/config/credits'
+import { HelpGuide } from '@/components/help'
 import { useImagesStore, useSettingsStore } from '@/lib/stores'
 import { Credits } from '@/components/credits'
 
@@ -35,8 +35,11 @@ function importAnnotations(content: string) {
 <template>
   <AppMenu :reverse="settingsStore.isLeft" @update:reverse="settingsStore.useToggleLeft" app-name="Polaroptica"
     @export="exportAnnotations" @import="importAnnotations">
+    <template #help-guide>
+      <HelpGuide />
+    </template>
     <template #credits>
       <Credits />
     </template>
-    </AppMenu>
+  </AppMenu>
 </template>
