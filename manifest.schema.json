@@ -1,0 +1,62 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:optica:polaroptica:manifest:1",
+    "title": "Polaroptica manifest (rotation.json), version 1",
+    "description": "Images taken while the polarizers rotate. The common fields are in core/api/optica_core/manifest.schema.json.",
+    "allOf": [
+        {
+            "$ref": "urn:optica:manifest:1"
+        }
+    ],
+    "required": [
+        "angleUnit"
+    ],
+    "properties": {
+        "viewer": {
+            "const": "polaroptica"
+        },
+        "acquisitions": {
+            "items": {
+                "$ref": "#/$defs/acquisition"
+            }
+        }
+    },
+    "$defs": {
+        "acquisition": {
+            "description": "A rotation: its images, each at its angle",
+            "allOf": [
+                {
+                    "$ref": "urn:optica:manifest:1#/$defs/acquisition"
+                }
+            ],
+            "required": [
+                "images"
+            ],
+            "properties": {
+                "images": {
+                    "items": {
+                        "$ref": "#/$defs/image"
+                    }
+                }
+            },
+            "unevaluatedProperties": false
+        },
+        "image": {
+            "description": "An image at its angle, in angleUnit",
+            "allOf": [
+                {
+                    "$ref": "urn:optica:manifest:1#/$defs/image"
+                }
+            ],
+            "required": [
+                "angle"
+            ],
+            "properties": {
+                "angle": {
+                    "type": "number"
+                }
+            },
+            "unevaluatedProperties": false
+        }
+    }
+}

@@ -7,30 +7,31 @@ class RotationDataset(Dataset):
     """Images of an object under polarized light rotated around it (rotation.json)."""
 
     manifest = "rotation.json"
+    viewer = "polaroptica"
 
     def images(self, id):
-        rotation_file = self.load(id)
-        folder = self.thumbnails_folder(id, rotation_file)
-        images = []
-        for name, data in rotation_file["rotation"].items():
-            if "angle" not in data:
-                print(f"{name} has no angle, skipped")
-                continue
-            images.append(image(
-                name,
-                angle=round(data["angle"], 1),
-                hasThumbnail=self.has_thumbnail(folder, name),
-            ))
-        return project(acquisition(
-            "rotation",
-            size={"height": rotation_file["height"], "width": rotation_file["width"]},
-            images=images,
-        ))
+        manifest = self.load(id)
+        folder = self.thumbnails_folder(id, manifest)
+        acquisitions = []
+        for rotation in manifest["acquisitions"]:
+            images = []
+            for entry in rotation["images"]:
+                if "angle" not in entry:
+                    print(f"{entry['file']} has no angle, skipped")
+                    continue
+                images.append(image(
+                    entry["file"],
+                    entry.get("label"),
+                    angle=round(self.degrees(manifest, entry["angle"]), 1),
+                    hasThumbnail=self.has_thumbnail(folder, entry["file"]),
+                ))
+            acquisitions.append(acquisition(rotation["id"], label=rotation.get("label"), size=rotation["size"], images=images))
+        return project(*acquisitions, unit=manifest["unit"])
 
-    # all the images share the pixel ratio of the object
+    # pixel size of the image, else of its acquisition; an uncalibrated image gives its pixel coordinates
     def position(self, id, image_id, x, y):
-        pixel_ratio = self.load(id)["PixelRatio"]
-        return {"x": x * pixel_ratio[0], "y": y * pixel_ratio[1]}
+        pixel_size = self.pixel_size(*self.find_image(self.load(id), image_id)) or [1, 1]
+        return {"x": x * pixel_size[0], "y": y * pixel_size[1]}
 
 
 # the series of the A09135 sample, $OPTICA_DATA_FOLDER overrides it
