@@ -14,7 +14,7 @@ Polaroptica rebuilt on [`core/`](../core): the viewers, landmark and distance li
 python -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/flask --app app run --port 5000
 
-# frontend (http://localhost:5173/?series=isrnbel001_r1_xpl)
+# frontend (http://localhost:5173/?object=isrnbel001_r1_xpl)
 npm install
 npm run dev
 ```
